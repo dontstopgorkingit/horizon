@@ -170,6 +170,8 @@ pub struct ArrowState {
     /// The block it stuck in (`lastState`).
     pub last_state: Option<BlockStateId>,
     pub pickup: Pickup,
+    /// Its entity type is `SpectralArrow` (the type is its own, not the pickup item's).
+    pub spectral: bool,
     /// `pickupItemStack`: what picking the arrow up gives.
     pub pickup_item: crate::items::ItemStack,
     /// `AbstractArrow.firedFromWeapon`: the crossbow or bow it was shot from.
@@ -199,6 +201,12 @@ pub struct ArrowState {
     pub events: Vec<ArrowEvent>,
     /// The speed (`deltaMovement.length()`) it hit a block at, before it stuck.
     pub hit_speed: f64,
+    /// Spawn position when this fresh arrow joined the level before its first tick.
+    pub spawn_pos: Option<Vec3>,
+    /// Spawn velocity when this fresh arrow joined the level before its first tick.
+    pub spawn_velocity: Option<Vec3>,
+    /// Spawn rotation (pitch, yaw) when this fresh arrow joined the level before its first tick.
+    pub spawn_rot: Option<(f32, f32)>,
 }
 impl fmt::Debug for ArrowState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -227,6 +235,7 @@ impl ArrowState {
             shake: 0,
             last_state: None,
             pickup: Pickup::Disallowed,
+            spectral: false,
             pickup_item: crate::items::ItemStack::new("minecraft:arrow", 1),
             fired_from_weapon: None,
             no_physics: false,
@@ -245,6 +254,9 @@ impl ArrowState {
             random,
             events: Vec::new(),
             hit_speed: 0.0,
+            spawn_pos: None,
+            spawn_velocity: None,
+            spawn_rot: None,
         }
     }
     /// `Arrow.getColor` of the server's own arrow: the colour of the potion on
