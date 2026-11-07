@@ -191,6 +191,17 @@ fn is_call_site(name: &str) -> bool {
 mod tests {
     use super::*;
 
+    #[test]
+    fn named_stream_is_stable_and_mastered() {
+        let a = pinned_seed_with(42, "block_breaking_particle");
+        let b = pinned_seed_with(42, "block_breaking_particle");
+        assert_eq!(a, b);
+        assert_ne!(pinned_seed_with(42, "block_breaking_particle"),
+                   pinned_seed_with(42, "spectator_team_icon"));
+        assert_ne!(pinned_seed_with(7, "block_breaking_particle"),
+                   pinned_seed_with(42, "block_breaking_particle"));
+    }
+
     /// Values from the Java agent with `-Dhorizon.rng.seed=42`, independently
     /// derived from `(uniq * STEP) ^ 42`.
     #[test]
@@ -239,3 +250,4 @@ mod tests {
         }
     }
 }
+

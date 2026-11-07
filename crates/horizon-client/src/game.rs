@@ -4261,8 +4261,13 @@ impl Game<'_> {
             return;
         };
         let boxes = self.particle_shape(pos, state);
-        // Keep client effects separate from the authoritative world RNG.
-        let r = self.particles.random();
+        // Named stream, independent of creation order: deterministic when a
+        // master seed is set, falling back to the engine's random otherwise.
+        let mut named = horizon_core::random::pinned_seed("block_breaking_particle")
+            .map(horizon_core::random::LegacyRandom::new);
+        let r = named
+            .as_mut()
+            .unwrap_or_else(|| self.particles.random());
         let Some(p) = horizon_client::particles::breaking_position(r, pos, face, &boxes) else {
             return;
         };
