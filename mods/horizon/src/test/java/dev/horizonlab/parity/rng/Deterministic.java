@@ -13,9 +13,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * The seed every patched {@code RandomSupport.generateUniqueSeed()} call returns.
  *
  * <p>Vanilla's formula is {@code uniquifier.updateAndGet(x -> x * STEP) ^ System.nanoTime()}.
- * With a master seed the clock term is the seed instead, so two runs, and Horizon with
- * {@code HORIZON_RNG_SEED}, see the same sequence as long as they create random sources in the
- * same order. The clock term is the only nondeterministic part; seeded sources
+ * With a master seed the clock term is the seed instead, so a vanilla oracle run becomes
+ * repeatable. This does not make vanilla match Horizon; the two need not create random sources in
+ * the same order. The clock term is the only nondeterministic part; seeded sources
  * ({@code RandomSource.create(long)}) are already repeatable.
  *
  * <p>The agent is opt-in ({@code tools/rng_determinism.py}); without it nothing here runs.

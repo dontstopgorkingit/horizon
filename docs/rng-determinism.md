@@ -1,7 +1,7 @@
 # Repeatable random numbers
 
-Parity work compares Horizon with vanilla. Vanilla's seeded streams (`RandomSource.create(seed)`,
-worldgen, mob AI) are already repeatable; the unseeded ones are not:
+Horizon's unseeded random streams are not repeatable across runs by default. Vanilla's seeded
+streams (`RandomSource.create(seed)`, worldgen, mob AI) already are; the unseeded ones come from
 
 ```java
 // RandomSupport.generateUniqueSeed()
@@ -9,10 +9,11 @@ seedUniquifier.updateAndGet(x -> x * 1181783497276652981L) ^ System.nanoTime()
 ```
 
 `System.nanoTime()` is the only nondeterministic term. Horizon mirrors the formula in
-`horizon_core::random::unique_seed()`, including the clock, so two runs (and the two
-implementations) differ at the first `RandomSource.create()`.
-
-`tools/rng_determinism.py` replaces the clock term with one master seed on both sides.
+`horizon_core::random::unique_seed()`, with the same clock, so each run draws its own sequence
+unless it is pinned. `HORIZON_RNG_SEED` replaces that clock term with one master seed, making a
+Horizon run (and its screenshots, traces and tests) repeatable. `tools/rng_determinism.py` can
+apply the same pinning to a vanilla oracle run for comparison; the two still need not create or
+consume streams in the same order.
 
 ## Pin a seed
 
@@ -43,7 +44,7 @@ stays repeatable without another variable. The Java agent does the same when `HO
 The seed is process-wide: in single player the window and the server thread share one sequence,
 as they share vanilla's `SEED_UNIQUIFIER` in one JVM.
 
-## Check that both sides agree
+## Check a run is repeatable
 
 ```sh
 python3 tools/rng_determinism.py verify --seed 42 --count 64 --trace
@@ -51,9 +52,11 @@ python3 tools/rng_determinism.py verify --seed 42 --count 64 --trace
 
 `verify` runs `RngDeterminismOracle` under the agent and `client_probe rng_determinism` with the
 same seed. Both create `count` streams, print each seed and `nextLong()` of `LegacyRandom` and
-`XoroshiroRandom`, then draw from `RandomSource.create()` and the thread-local instance. The
-outputs must be byte-identical. `tools/test_rng_determinism_parity.py` is the same check in
-`tools/parity.py`, with `--trace` on.
+`XoroshiroRandom`, then draw from `RandomSource.create()` and the thread-local instance. This checks
+that a pinned seed reproduces the same stream seeds and is a debugging aid for comparing creation
+order; it does not imply that Horizon and vanilla produce the same gameplay, since they need not
+create or consume streams in the same order. `tools/test_rng_determinism_parity.py` is the same
+check in `tools/parity.py`, with `--trace` on.
 
 ## Trace the creation order
 
@@ -67,7 +70,7 @@ Java records `Class.method`; Horizon records `crate::module::function (file.rs)`
 compares the `(index, seed)` columns, not the site text, and names the first stream whose index or
 seed differs. That distinguishes the two failure modes:
 
-* **The same streams, in the same order**: matching seeds mean the RNG is aligned.
+* **The same streams, in the same order**: matching seeds mean the run is repeatable.
 * **The same streams, in a different order** (or a different count): something creates a random
   source where the other side doesn't. The trace line before the first difference is the caller.
 

@@ -3,13 +3,10 @@
 //! Vanilla's unseeded streams come from `RandomSupport.generateUniqueSeed()`:
 //! `uniquifier.updateAndGet(x -> x * STEP) ^ System.nanoTime()`. The clock is
 //! the only nondeterministic term. With `HORIZON_RNG_SEED` (or
-//! `HORIZON_STILL=1`) set, the same formula uses the master seed instead, so
-//! Horizon and Java (through `tools/rng_determinism.py`'s agent) draw the same
-//! sequence as long as they create streams in the same order.
-//!
-//! This makes a parity run reproducible; it cannot make two implementations
-//! agree if they create or consume streams in a different order. When a call
-//! site's order genuinely differs (particles, for example), give it a name with
+//! `HORIZON_STILL=1`) set, that clock term is the master seed instead, so a
+//! Horizon run becomes repeatable. This does not make Horizon match vanilla:
+//! the two need not create or consume streams in the same order. When a call
+//! site's order differs (particles, for example), give it a name with
 //! [`pinned_seed`] instead of taking the next value of the shared sequence.
 
 use super::seed_from_hash;
@@ -44,8 +41,8 @@ pub fn master_seed() -> Option<i64> {
 
 /// `RandomSupport.generateUniqueSeed`: the next unseeded stream's seed.
 ///
-/// Without a master seed this is vanilla's clock-based stream. With one, the
-/// clock term is the seed, exactly as the Java agent's `Deterministic.seed()`.
+/// Without a master seed this is the clock-based stream. With one, the clock
+/// term is the master seed instead, making the run repeatable.
 pub fn unique_seed() -> i64 {
     let next = next_uniquifier(&UNIQUIFIER);
     let seed = match master_seed() {

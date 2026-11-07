@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Make unseeded randomness repeatable in both Horizon and vanilla Java.
+"""Make unseeded randomness repeatable within Horizon (and optionally a vanilla oracle run).
 
 Vanilla's `RandomSource.create()` (and `RandomSupport.generateUniqueSeed()`) is the only
 nondeterministic random source in the game: `(uniquifier * STEP) ^ System.nanoTime()`. Horizon
-mirrors it in `horizon_core::random::unique_seed()`. This tool replaces the clock term with one
-master seed on both sides:
+mirrors it in `horizon_core::random::unique_seed()`. This tool can replace the clock term with one
+master seed on the Horizon side (and, optionally, in a vanilla oracle run):
 
   * Java: a `-javaagent` (`mods/horizon/.../parity/rng/Agent.java`) patches
     `RandomSupport.generateUniqueSeed()` and `RandomSource.createThreadLocalInstance()`.
-  * Horizon: set `HORIZON_RNG_SEED`; `unique_seed()` then returns the same sequence. Setting
+  * Horizon: set `HORIZON_RNG_SEED`; `unique_seed()` then returns a repeatable sequence. Setting
     `HORIZON_STILL=1` pins it to seed 0, as it already pins visual time.
 
 Same sequence, not necessarily same order: two implementations still have to create and consume
