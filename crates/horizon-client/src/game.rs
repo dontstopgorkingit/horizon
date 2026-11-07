@@ -4268,8 +4268,8 @@ impl Game<'_> {
             "block_breaking_particle:{}:{}:{}:{}:{}:{}:{}",
             self.world.game_time, pos[0], pos[1], pos[2], face[0], face[1], face[2]
         );
-        let mut named = horizon_core::random::pinned_seed(&key)
-            .map(horizon_core::random::LegacyRandom::new);
+        let mut named =
+            horizon_core::random::pinned_seed(&key).map(horizon_core::random::LegacyRandom::new);
         let r = named.as_mut().unwrap_or_else(|| self.particles.random());
         let Some(p) = horizon_client::particles::breaking_position(r, pos, face, &boxes) else {
             return;

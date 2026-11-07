@@ -5839,8 +5839,8 @@ impl Game<'_> {
             "item_burst:{}:{}:{}:{}",
             self.world.game_time, at[0], at[1], at[2]
         );
-        let mut named = horizon_core::random::pinned_seed(&key)
-            .map(horizon_core::random::LegacyRandom::new);
+        let mut named =
+            horizon_core::random::pinned_seed(&key).map(horizon_core::random::LegacyRandom::new);
         for _ in 0..8 {
             let v = if egg {
                 let r = named.as_mut().unwrap_or_else(|| self.particles.random());
