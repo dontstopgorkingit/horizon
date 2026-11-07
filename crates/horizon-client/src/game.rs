@@ -4261,8 +4261,16 @@ impl Game<'_> {
             return;
         };
         let boxes = self.particle_shape(pos, state);
+        // Named stream, derived from the tick and position so repeated cracks
+        // stay varied while remaining deterministic under HORIZON_RNG_SEED.
         // Keep client effects separate from the authoritative world RNG.
-        let r = self.particles.random();
+        let key = format!(
+            "block_breaking_particle:{}:{}:{}:{}:{}:{}:{}",
+            self.world.game_time, pos[0], pos[1], pos[2], face[0], face[1], face[2]
+        );
+        let mut named = horizon_core::random::pinned_seed(&key)
+            .map(horizon_core::random::LegacyRandom::new);
+        let r = named.as_mut().unwrap_or_else(|| self.particles.random());
         let Some(p) = horizon_client::particles::breaking_position(r, pos, face, &boxes) else {
             return;
         };
