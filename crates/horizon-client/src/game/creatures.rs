@@ -2171,6 +2171,11 @@ impl Game<'_> {
             a.spawn_pos = Some(p.position);
             a.spawn_velocity = Some(p.velocity);
             a.spawn_rot = Some((p.pitch, p.yaw));
+            // Entity.random: per-entity stream, seeded by the id we just
+            // assigned (unique), like thrown tridents/potions and saved
+            // projectiles. Seeding by spawn position collides for shots from
+            // the same spot.
+            a.random = horizon_core::random::LegacyRandom::new(i64::from(p.id));
         }
         self.creatures.projectiles.push(p);
         self.native_projectile_launch(player, &name, id, kind);
