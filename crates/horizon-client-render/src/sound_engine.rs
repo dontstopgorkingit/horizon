@@ -10,7 +10,7 @@
 //! sound thread keeps up between ticks); a channel's own end is reported by the
 //! backend through `stopped`.
 use crate::sound_events::{INTENTIONALLY_EMPTY, Sentinel, Sound, SoundRegistry};
-use horizon_core::random::{LegacyRandom, seed_for};
+use horizon_core::random::LegacyRandom;
 use std::{
     collections::HashMap,
     sync::{Arc, OnceLock, RwLock},
@@ -1582,7 +1582,7 @@ impl SoundEngine {
     }
     /// A fresh unseeded random (`RandomSource.create()`).
     pub fn unseeded() -> LegacyRandom {
-        LegacyRandom::new(seed_for("sound_instance"))
+        LegacyRandom::new(unique_seed())
     }
 }
 /// `RandomSupport.generateUniqueSeed`, with `HORIZON_RNG_SEED` making it repeatable.
