@@ -138,7 +138,7 @@ enum Target {
 /// (`RandomSupport.generateUniqueSeed`). Draws of an entity's own random never
 /// touch the level's stream.
 pub(super) fn entity_random() -> LegacyRandom {
-    LegacyRandom::new(horizon_core::random::unique_seed())
+    LegacyRandom::new(horizon_core::random::seed_for("dispenser"))
 }
 /// `new ItemEntity(level, x, y, z, stack)`'s motion, from the item's own random.
 pub(super) fn new_item_motion() -> [f64; 3] {

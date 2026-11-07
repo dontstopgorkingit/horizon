@@ -35,7 +35,7 @@ use horizon_client::{
     stations::{self, AnvilResult, EnchantOffers},
     text::Text,
 };
-use horizon_core::random::{LegacyRandom, RandomSource};
+use horizon_core::random::{LegacyRandom, RandomSource, seed_for};
 
 /// The book above the enchanting table's offers: `EnchantmentScreen`'s
 /// `time`, `flip`, `oFlip`, `flipT`, `flipA`, `open`, `oOpen` and `last`.
@@ -390,7 +390,7 @@ impl Station {
             loom: Default::default(),
             cycling: Default::default(),
             book: EnchantBook::new(LegacyRandom::new(
-                horizon_client::sound_engine::unique_seed(),
+                seed_for("station_sound"),
             )),
         }
     }

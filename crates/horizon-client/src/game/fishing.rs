@@ -12,12 +12,11 @@ use horizon_client::{
     mesher::Vertex,
     particles::{ParticleOptions, ParticleType},
     pose::Pose,
-    sound_engine::unique_seed,
 };
 use horizon_core::{
     geometry::{Aabb, Vec3, traverse_blocks, trig},
     position::BlockPos,
-    random::{LegacyRandom, RandomSource},
+    random::{LegacyRandom, RandomSource, seed_for},
 };
 use horizon_protocol::entity_data::{Value, serializer};
 use std::{collections::HashMap, sync::Arc};
@@ -453,7 +452,7 @@ impl Game<'_> {
                 eye_y,
                 p.position.z - f64::from(y_cos) * 0.3,
             );
-            let mut random = LegacyRandom::new(unique_seed());
+            let mut random = LegacyRandom::new(seed_for("fishing"));
             let v = cast_velocity(y_sin, y_cos, dir_y, &mut random);
             self.next_entity += 1;
             self.hook = Some(Hook {
@@ -1480,7 +1479,7 @@ impl Hook {
             luck: 0,
             lure: 0,
             lerp: HookLerp::default(),
-            random: LegacyRandom::new(unique_seed()),
+            random: LegacyRandom::new(seed_for("fishing")),
         }
     }
     /// `FishingHook`'s entity for the players tracking it: the owner's id in
@@ -1540,7 +1539,7 @@ impl Game<'_> {
                 state: State::Flying,
                 on_ground: false,
                 lerp: HookLerp::default(),
-                random: LegacyRandom::new(unique_seed()),
+                random: LegacyRandom::new(seed_for("fishing")),
             });
         }
     }
