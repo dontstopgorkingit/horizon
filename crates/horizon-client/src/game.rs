@@ -14798,9 +14798,10 @@ impl Game<'_> {
             roughly.map(|v| v / len)
         };
         let at = self.unstuck_orb([0, 1, 2].map(|a| at[a] + unit[a] * 0.25));
-        let mut r = dispenser::entity_random();
-        let _yaw = r.next_float();
         let p = Vec3::new(at[0], at[1], at[2]);
+        self.next_entity += 1;
+        let mut r = crate::mobs::entity_random(self.next_entity, p);
+        let _yaw = r.next_float();
         let mut velocity = Vec3::new(
             (r.next_double() * 0.2 - 0.1) * 2.0,
             r.next_double() * 0.2 * 2.0,
@@ -14810,7 +14811,6 @@ impl Game<'_> {
         if len_sqr > 0.0 && dot < 0.0 {
             velocity = Vec3::new(-velocity.x, -velocity.y, -velocity.z);
         }
-        self.next_entity += 1;
         self.orbs.push(ExperienceOrb {
             rotation: [0.0, 0.0],
             join: Default::default(),
