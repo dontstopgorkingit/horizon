@@ -4339,8 +4339,11 @@ impl Game<'_> {
         let count = stack.count as i32;
         self.next_entity += 1;
         let p = Vec3::new(position[0], position[1], position[2]);
-        // ItemEntity.bobOffs comes from the entity's own random, not the level's.
-        let bob = self.particles.random().next_float() * std::f32::consts::PI * 2.0;
+        // ItemEntity.bobOffs comes from the entity's own random, not the level's
+        // nor the shared particle-engine random.
+        let bob = crate::mobs::entity_random(self.next_entity, p).next_float()
+            * std::f32::consts::PI
+            * 2.0;
         self.dropped.push(ItemEntity {
             rotation: [0.0, 0.0],
             join: Default::default(),
