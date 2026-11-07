@@ -389,9 +389,7 @@ impl Station {
             beacon_levels: None,
             loom: Default::default(),
             cycling: Default::default(),
-            book: EnchantBook::new(LegacyRandom::new(
-                unique_seed(),
-            )),
+            book: EnchantBook::new(LegacyRandom::new(unique_seed())),
         }
     }
     pub(super) fn new_kind(kind: Kind, pos: [i32; 3]) -> Self {

@@ -193,10 +193,14 @@ mod tests {
         let a = pinned_seed_with(42, "block_breaking_particle");
         let b = pinned_seed_with(42, "block_breaking_particle");
         assert_eq!(a, b);
-        assert_ne!(pinned_seed_with(42, "block_breaking_particle"),
-                   pinned_seed_with(42, "spectator_team_icon"));
-        assert_ne!(pinned_seed_with(7, "block_breaking_particle"),
-                   pinned_seed_with(42, "block_breaking_particle"));
+        assert_ne!(
+            pinned_seed_with(42, "block_breaking_particle"),
+            pinned_seed_with(42, "spectator_team_icon")
+        );
+        assert_ne!(
+            pinned_seed_with(7, "block_breaking_particle"),
+            pinned_seed_with(42, "block_breaking_particle")
+        );
     }
 
     /// Values from the Java agent with `-Dhorizon.rng.seed=42`, independently
@@ -247,4 +251,3 @@ mod tests {
         }
     }
 }
-
